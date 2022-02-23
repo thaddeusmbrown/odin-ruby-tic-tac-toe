@@ -14,10 +14,8 @@ class TicTacToe
   protected
 
   def check_victory(side)
-    # binding.pry
     if @board_state[0] == side && ((@board_state[1] == side && @board_state[2] == side) || (@board_state[3] == side && @board_state[6] == side) || (@board_state[4] == side && @board_state[8] == side))
       puts "Victory! Player #{side} wins!"
-      1
     elsif @board_state[1] == side && board_state[4] == side && board_state[7] == side
       puts "Victory! Player #{side} wins!"
       1
@@ -43,7 +41,6 @@ class TicTacToe
   end
 
   def display_board
-    # binding.pry
     puts '     |     |     '
     puts "  #{board_state[0]}  |  #{board_state[1]}  |  #{board_state[2]}  "
     puts '     |     |     '
@@ -59,9 +56,8 @@ class TicTacToe
 
   def take_turn(side)
     puts "\n Player #{side}'s turn.\n Enter number of place you'd like to choose:"
-    while 1
+    loop do
       begin
-        # binding.pry
         num = Kernel.gets.match(/\d+/)[0]
         continue unless @board_state.include? num.to_i
       rescue StandardError
@@ -72,7 +68,6 @@ class TicTacToe
         break
       end
     end
-    # binding.pry
     if check_victory(side)
       1
     else
@@ -80,6 +75,3 @@ class TicTacToe
     end
   end
 end
-
-game = TicTacToe.new
-game.new_game
