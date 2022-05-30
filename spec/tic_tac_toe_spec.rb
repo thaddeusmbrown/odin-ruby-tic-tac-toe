@@ -85,8 +85,17 @@ describe '#check_victory' do
     end.to output("Tie game!\n").to_stdout
   end
   it 'increments the turn counter when no victory or tie is declared' do
+    @main.instance_variable_set(:@turns, 7)
+    check_side = @main.turn_counter[0]
+    @main.send(:check_victory, check_side)
+    expect(@main.instance_variable_get(:@turns)).to eql(8)
   end
   it 'switches to the next player after each turn if no victory or tie is declared' do
+    @main.instance_variable_set(:@turns, 7)
+    check_side = @main.turn_counter[1]
+    @main.send(:check_victory, check_side)
+    new_turn_counter = @main.instance_variable_get(:@turn_counter)
+    expect(new_turn_counter[0]).to eql(check_side)
   end
 end
 
@@ -111,18 +120,30 @@ describe '#new_game' do
 end
 
 describe '#take_turn' do
+  before(:each) do
+    @main = TicTacToe.new
+    @main.stub(:take_turn)
+    STDOUT.stub(:write)
+    @main.new_game
+  end
   describe 'when the method asks user for input' do
     it 'accepts an integer representing a space that has not been used yet' do
+      allow(Kernel).to receive(:gets).and_return('1', '2', '3', '5', '4', '6', '8', '7', '9')
+      @main.should_receive(:take_turn).exactly(9).times.and_call_original
+      response = @main.send(:take_turn, @main.turn_counter[0])
+      expect(response).to eql(1)
     end
     it 'rejects an integer representing a space that has already been used' do
+      allow(Kernel).to receive(:gets).and_return('1', '1', '2', '3', '5', '4', '6', '8', '7', '9')
+      @main.should_receive(:take_turn).exactly(9).times.and_call_original
+      response = @main.send(:take_turn, @main.turn_counter[0])
+      expect(response).to eql(1)
     end
     it 'rejects a non-integer value' do
+      allow(Kernel).to receive(:gets).and_return('foo', '1', '2', '3', '5', '4', '6', '8', '7', '9')
+      @main.should_receive(:take_turn).exactly(9).times.and_call_original
+      response = @main.send(:take_turn, @main.turn_counter[0])
+      expect(response).to eql(1)
     end
-  end
-  it 'changes the value in the board state to the correct player symbol' do
-  end
-  it 'breaks the loop when victory or tie is declared' do
-  end
-  it 'recursively calls itself when victory or tie is not declared' do
   end
 end
